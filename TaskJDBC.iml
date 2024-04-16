@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module version="4">
-  <component name="SonarLintModuleSettings">
-    <option name="uniqueId" value="616d799f-9473-492d-b56a-59358f8cf64f" />
+  <component name="FacetManager">
+    <facet type="jpa" name="JPA">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <datasource-mapping />
+        <naming-strategy-map />
+      </configuration>
+    </facet>
   </component>
 </module>

@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.logging.Level;
 
 public class Util {
     // реализуйте настройку соеденения с БД
@@ -19,16 +20,26 @@ public class Util {
     private String database = "jdbc:mysql://localhost:3306/testDB";
     private String userName = "root";
     private String password = "5986";
-    private Util() {
+    private Util(String ConnectionType) {
+        if (ConnectionType.equals("JDBC")) {
+            connection = buildConnection();
+        } else if (ConnectionType.equals("Hibernate")) {
+            sessionFactory = buildSessionFactory();
+        }
+
+    }
+    private Connection buildConnection() {
         try {
             connection = DriverManager.getConnection(database, userName, password);
-            System.out.println("Соединение успешно");
         } catch (SQLException exception) {
             throw new RuntimeException("Проблема с подключением к базе данных JDBC.");
         }
+        return connection;
+    }
+    private SessionFactory buildSessionFactory() {
         try {
+            java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
             Configuration configuration = new Configuration();
-
             // Hibernate settings equivalent to hibernate.cfg.xml's properties
             Properties settings = new Properties();
             settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
@@ -52,29 +63,29 @@ public class Util {
         } catch (Exception e) {
             throw new RuntimeException("Проблема с подключением к базе данных Hibernate.");
         }
+        return sessionFactory;
     }
     public static Connection getConnection() {
         if (connection == null) {
-            new Util();
+            new Util("JDBC");
         }
         return connection;
     }
     public static void closeConnection() {
         try {
             connection.close();
-            System.out.println("Успешное закрытие соединения");
         } catch (SQLException exception) {
             throw new RuntimeException("Не существует подключения для закрытия");
         }
     }
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
-            new Util();
+            new Util("Hibernate");
         }
         return sessionFactory;
     }
     public static void closeSessionFactory() {
         sessionFactory.close();
-        System.out.println("Успешное закрытие соединения");
+        sessionFactory = null;
     }
 }
